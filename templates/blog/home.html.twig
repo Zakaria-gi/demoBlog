@@ -1,0 +1,27 @@
+{% extends "base.html.twig" %} 
+{# On hérite du template de base 'base.html.twig' #}
+
+{# block body du template 'base.html.twig' #}
+{% block body %}
+
+
+    <h1 class="dispaly-4 text-center my-4">{{ titre }}</h1>
+    {# TWIG est un langage de rendu #}
+
+    {# {{}} --> double accolades, ce que l'on appel une iterpolation #}
+
+    {# On affiche le contenu de la variable 'title' déclarée dans la méthode 'home()' du controller 'BlogController' #}
+
+    {# Pour faire à une commande de TWIG, toujours {% %} #}
+
+    {% if age > 18 %}
+
+        <p>Tu es majeur</p>
+
+    {% else %}
+
+        <p>Tu es mineur</p>
+
+    {% endif %}
+
+{% endblock %}
