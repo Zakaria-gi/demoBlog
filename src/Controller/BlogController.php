@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Repository\ArticleRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -15,7 +17,7 @@ class BlogController extends AbstractController
     /**
      * @Route("/blog", name="blog")
      */
-    public function index()
+    public function index(ArticleRepository $repo)
     {
         /*
             Pour selectionner des donnéess en BDD, nous avons besoin de la classe Repository de la classe Article
@@ -30,16 +32,18 @@ class BlogController extends AbstractController
             la barre administrative (cible à droite)
         */
 
-        $repo = $this->getDoctrine()->getRepository(Article::class);
+        //$repo = $this->getDoctrine()->getRepository(Article::class);
 
-        $article = $repo->findAll();
+        $articles = $repo->findAll();
         // findAll() est une méthode issue de la classe ArticleRepository qui permet de selectionner l'ensemble de la table (similaire à SELECT * FROM article)
 
-        dump($article);
+        dump($articles);
 
         return $this->render('blog/index.html.twig', [
             'controller_name' => 'BlogController',
+            'articles' => $articles 
         ]);
+        // On envoie les articles selectionnés en BDD directement sur le navigateur dans le template index.html.twig
     }
 
     /**
@@ -53,16 +57,87 @@ class BlogController extends AbstractController
         ]);
     }
 
-    // show() : méthode permettant d'afficher le détail d'1 article 
-
     /**
-     * @Route("/blog/45", name="blog_show")
+     * @Route("/blog/new", name="blog_create")
      */
-    public function show()
+
+    public function create(Request $request)
     {
-        return $this->render('blog/show.html.twig');
+        dump($request);
+
+        return $this->render('/blog/create.html.twig');
     }
 
-    // Crée 1 méthode create() (route '/create') renvoie le template create.html.twig + un peu de contenu dans le template +
-    // test navigateur 
+
+    // show() : méthode permettant d'afficher le détail d'1 article 
+                    //3
+    /**
+     * @Route("/blog/{id}", name="blog_show")
+     */
+    public function show(Article $article) // 3
+    {
+        /*
+            Pour selectionner un article dans la BDD, nous utilisons le principe de route paramétrées 
+            Dans la route, on définit un paramètres de type{id}
+            Lorsque nous transmettons dans l'URL par exemple une route '/blog/9', donc on envoie un id connu en BDD dans l'URL
+            Symfony va automatiquement récupérer ce paramètre et le transmettre en argument de la méthode show()
+            Cela veut dire que nous avons accées à l'{id} à l'intérieur de la méthode show()
+            Le but est de seléctioner les données en BDD de l'{id} récupéré en parametre de la méthode show()
+            Nous avons besoin pour cela de la classe ArticleRepository afin de pouvoir selectionner en BDD
+            La méthode find() est issue de la classe ArticleRepository et permet de selectionner des données en BDD a partir 
+            d'un parametre de type {id}
+            getDoctrine() : l'ORM fait le travail pour nous, c'est a dire qu"elle récupere la requete de selection pour l'executer 
+            en BDD et Doctrine récupère le résultat de la requete de selection pour l'envoyer dans le controller, 
+
+            $repo est un objet issu de la classe ArticleRepository, nous avons accès a toute les méthode déclarées dans cette classe
+            (find, findAll, findBy, findOneBy etc ...)
+        */
+
+
+       // $repo = $this->getDoctrine()->getRepository(Article::class);
+
+        //$article  = $repo->find($id); // 3, on transmet en argument de la méthode find(), le paramètre {id} récupéré dans l'URL
+
+        dump($article);
+
+        return $this->render('blog/show.html.twig', [
+            'article' => $article // données d 1 article
+        ]);
+        // On envoie dans le template show.html.twig, les données selectionnées en BDD, c'est a dire le detail d'un artcile
+        // extract(['article' => $article]) => 'article' devient une variable TWIG dans le template show.html.twig
+
+      
+        /*            doctrine
+                BDD  <_______  
+                |             |  
+                |              CONTROLLER _______ > libère les templates + données BDD sur la navigateur
+                |____________>|
+                    doctrine
+        */
+    }
+
+    
+
+  
 }
+
+/*
+    Injection de dépendances
+
+    Dans Symfony nous avons un service container, tout ce qui est contenue dans Symfony est geré par Symfony
+    Si nous observons la classe BlogController, nous ne l'avons jamais instanciée, c'est Symfony lui-meme qui se charge 
+    de l'instancier, donc il instancie des classes et appel ses fonctions 
+
+    Dans Symfony, ces objets utiles sont appelés 'services' et chaque service vit à l'interieur d'un objet trés spécial appelé conteneur
+    de service. il vous facilite la vie, favorise une architecture solide et super rapide !! 
+
+    La fonction index() a pour rôle de nous afficher la liste des articles de la BDD et pour fonctionner, elle a donc besoin d'un 
+    respository (requete de selection), quand une fonction a besoin de quelque chose pour fonctionner, on appel ça une dépendance,
+    la fonction dépend d'un repository pour aller chercher la liste des articles 
+
+    Donc si nous avons dépendance, nous pouvons demander à Symfony de nous la fournir plutot que la fabriquer nous meme 
+
+    La fonction index() ce n'est pas nous qui l'executons, c'est Symfony qui le fait pour nous 
+
+    Nous devons fournir à la méthode index() en argument, un objet issu de la classe AricleRepository
+*/
