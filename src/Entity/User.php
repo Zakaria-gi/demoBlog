@@ -111,4 +111,9 @@ class User implements UserInterface
     {
         return ['ROLE_USER'];
     }
+
+    public function __toString()
+    {
+        return $this->email;
+    }
 }
