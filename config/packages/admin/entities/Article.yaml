@@ -1,0 +1,19 @@
+easy_admin:
+  entities:
+    Article:
+      class: App\Entity\Article
+      form:
+        fields:
+          - {property: 'title'}
+          - {property: 'content'}
+          - {property: 'image'}
+          - {property: 'category'}
+          - {property: 'createdAt'}
+      
+      list:
+        fields:
+          - {property: 'title'}
+          - {property: 'content'}
+          - {property: 'category'}
+          - {property: 'image', type: 'image'}
+          - {property: 'createdAt'}

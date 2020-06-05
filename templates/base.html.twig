@@ -28,7 +28,17 @@
                         {# patch() : fonction TWIG permettant de générer une URL en fonction du nom de la route envoyer en argument #}
                         {# le nom de la route 'blog' est déclarée dans le controller 'BlogController' et qui est rattaché à la méthode index() #}
                     </li>
-                        <li class="nav-item active">
+                       <li class="nav-item active">
+                        <a class="nav-link" href="{{ path('blog_create') }}">Identifiez-vous</a>
+                        {# patch() : fonction TWIG permettant de générer une URL en fonction du nom de la route envoyer en argument #}
+                        {# le nom de la route 'blog' est déclarée dans le controller 'BlogController' et qui est rattaché à la méthode index() #}
+                    </li>
+                       <li class="nav-item active">
+                        <a class="nav-link" href="{{ path('blog_create') }}">Créer un article</a>
+                        {# patch() : fonction TWIG permettant de générer une URL en fonction du nom de la route envoyer en argument #}
+                        {# le nom de la route 'blog' est déclarée dans le controller 'BlogController' et qui est rattaché à la méthode index() #}
+                    </li>
+                    <li class="nav-item active">
                         <a class="nav-link" href="{{ path('blog_create') }}">Crée un articles</a>
                         {# patch() : fonction TWIG permettant de générer une URL en fonction du nom de la route envoyer en argument #}
                         {# le nom de la route 'blog' est déclarée dans le controller 'BlogController' et qui est rattaché à la méthode index() #}
@@ -41,12 +51,25 @@
                         <a class="dropdown-item" href="#">Sport</a>
                         </div>
                     </li>
+
+
+                    {% if not app.user %}
+
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ path('blog_create') }}">Déconnexion</a>
+                    </li>
+
+                    {% endif %}
                     </ul>
                     <form class="form-inline my-2 my-md-0">
                     <input class="form-control" type="text" placeholder="Search">
                     </form>
                 </div>
             </nav>
+{# 
+        {{ dump(app.user) }} app : variable prédéfinie dans TWIG qui contient bcp de variable d'environnements ($_POST, $_GET,$_SESSION etc ..) permet de si on est connecté (true) ou deconnecté (false) #}
+        {# app.user : retourne les informlations de la session en cours, c'est à dire les informations de l'utilisateut qui est connecté #}
+        {# Si app.user renvoi TRUE, alors l'internaute est connecté, on rentre dans le IF, on lui propose le lien 'deconnexion' #}
 
             <div class="container mon-conteneur">
         {% block body %}
